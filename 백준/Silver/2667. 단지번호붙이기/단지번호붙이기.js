@@ -38,6 +38,4 @@ for (let i = 0; i < N; i++) {
 }
 
 
-console.log(
-    home + "\n" + `${result.sort((a, b) => a - b).join("\n")}`
-);
+console.log([home, ...result.sort((a, b) => a - b)].join("\n"));
