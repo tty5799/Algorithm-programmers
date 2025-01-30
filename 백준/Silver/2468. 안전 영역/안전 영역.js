@@ -1,45 +1,40 @@
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
 const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
 
-const N = +input.shift();
-const graph = input.map((line) => line.split(' ').map(Number));
+const N = +input.shift()
+const map = input.map((v) => v.split(' ').map(Number))
+let safe = 0
 
-const dy = [0, 1, 0, -1];
-const dx = [1, 0, -1, 0];
+function dfs(y,x,H,visited) {
+    visited[y][x] = 1
 
-let maxSafeZones = 0;
+    const dy = [0,1,0,-1]
+    const dx = [1,0,-1,0]
 
-function dfs(y, x, height, visited) {
-    visited[y][x] = true;
+    for(let i = 0; i <4; ++i) {
+        const ny = y + dy[i]
+        const nx = x + dx[i]
 
-    for (let i = 0; i < 4; i++) {
-        const ny = y + dy[i];
-        const nx = x + dx[i];
-
-        if (
-            ny >= 0 && ny < N && nx >= 0 && nx < N &&
-            !visited[ny][nx] &&
-            graph[ny][nx] > height
-        ) {
-            dfs(ny, nx, height, visited);
+        if(ny >= 0 && ny < N && nx >=0 && nx < N && map[ny][nx] > H && !visited[ny][nx]){
+            dfs(ny,nx,H,visited)
         }
     }
 }
 
-for (let height = 0; height <= 100; height++) {
-    let visited = Array.from({ length: N }, () => Array(N).fill(false)); // 방문 배열 초기화
-    let safeZones = 0;
 
-    for (let i = 0; i < N; i++) {
-        for (let j = 0; j < N; j++) {
-            if (graph[i][j] > height && !visited[i][j]) {
-                dfs(i, j, height, visited);
-                safeZones++;
+for(let H = 0; H < 100; ++H) {
+    let visited = Array.from(Array(N) , () => Array(N).fill(0))
+    let cnt = 0
+
+    for(let i = 0; i < N; ++i) {
+        for(let j =0; j < N; ++j) {
+            if(map[i][j] > H &&!visited[i][j]){
+                dfs(i,j,H,visited)
+                cnt++
             }
         }
     }
-
-    maxSafeZones = Math.max(maxSafeZones, safeZones);
+    safe = Math.max(safe,cnt)
 }
 
-console.log(maxSafeZones);
+console.log(safe)
